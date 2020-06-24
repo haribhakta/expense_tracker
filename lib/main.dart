@@ -50,19 +50,18 @@ class _ExpensePageState extends State<ExpensePage> {
 
   void _addnewtransaction(String itemname, double itemprice, DateTime date) {
     setState(() {
-      _usertrans.add(Transaction(
-          itemname: itemname, itemprice: itemprice, date:date ));
+      _usertrans.add(
+          Transaction(itemname: itemname, itemprice: itemprice, date: date));
     });
   }
 
   List<Transaction> get _recentTransactions {
     return _usertrans.where((tx) {
       return tx.date.isAfter(
-            DateTime.now().subtract(
-              Duration(days: 7),
-            ),
-          ) &&
-          tx.itemprice > 1000;
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
     }).toList();
   }
 

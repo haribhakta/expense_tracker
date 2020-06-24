@@ -13,14 +13,25 @@ class TrasactionList extends StatelessWidget {
           itemCount: _trans.length,
           itemBuilder: (ctx, index) => Card(
                 child: ListTile(
-                  leading: Text(_trans[index].itemprice.toString()),
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: FittedBox(
+                        child: Text(
+                          _trans[index].itemprice.toString(),
+                        ),
+                      ),
+                    ),
+                  ),
                   title: Text(_trans[index].itemname.toString()),
                   subtitle:
                       Text(DateFormat.yMMMEd().format(_trans[index].date)),
                   trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Colors.red,
-                      onPressed: () {}),
+                    icon: Icon(Icons.delete),
+                    color: Colors.red,
+                    onPressed: () {},
+                  ),
                 ),
               )),
     );
