@@ -38,9 +38,9 @@ class ExpensePage extends StatefulWidget {
 
 class _ExpensePageState extends State<ExpensePage> {
   List<Transaction> _usertrans = [
-    Transaction(itemname: "watch", itemprice: 200.0, date: DateTime.now()),
-    Transaction(itemname: "Jacket", itemprice: 1200.0, date: DateTime.now()),
-    Transaction(itemname: "Groceries", itemprice: 2000.0, date: DateTime.now()),
+    // Transaction(itemname: "watch", itemprice: 200.0, date: DateTime.now()),
+    // Transaction(itemname: "Jacket", itemprice: 1200.0, date: DateTime.now()),
+    // Transaction(itemname: "Groceries", itemprice: 2000.0, date: DateTime.now()),
   ];
 
   void _showaddtransaction(BuildContext bctx) {
@@ -65,18 +65,52 @@ class _ExpensePageState extends State<ExpensePage> {
     }).toList();
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
+    final mediaConst = MediaQuery.of(context);
+    final isLandScape = mediaConst.orientation == Orientation.landscape;
+
+    final appBar = AppBar(
+      title: Text("Expenses Tracker"),
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Expenses Tracker"),
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Chart(_recentTransactions),
-            // TransactionList();
-            TrasactionList(_usertrans),
+            if (isLandScape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Show Chart"),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _showChart = value;
+                      });
+                    },
+                  )
+                ],
+              ),
+            if (!isLandScape)
+              Container(
+                  height: mediaConst.size.height * 0.3 -
+                      mediaConst.padding.top -
+                      appBar.preferredSize.height,
+                  child: Chart(_recentTransactions)),
+            if (!isLandScape) TrasactionList(_usertrans),
+            if (isLandScape)
+              _showChart
+                  ? Container(
+                      height: mediaConst.size.height * 0.7 -
+                          mediaConst.padding.top -
+                          appBar.preferredSize.height,
+                      child: Chart(_recentTransactions))
+                  : TrasactionList(_usertrans),
           ],
         ),
       ),
