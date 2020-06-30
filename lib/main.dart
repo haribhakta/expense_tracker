@@ -3,6 +3,8 @@ import 'package:expense_tracker/widgets/newtransaction.dart';
 import 'package:flutter/material.dart';
 import './model/transaction.dart';
 import './widgets/transaction_list.dart';
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 
 void main() {
   runApp(MyApp());
@@ -50,8 +52,18 @@ class _ExpensePageState extends State<ExpensePage> {
 
   void _addnewtransaction(String itemname, double itemprice, DateTime date) {
     setState(() {
-      _usertrans.add(
-          Transaction(itemname: itemname, itemprice: itemprice, date: date));
+      _usertrans.add(Transaction(
+          itemname: itemname,
+          itemprice: itemprice,
+          date: date,
+          id: DateTime.now().toString()));
+    });
+  }
+
+  //delete transaction
+  void _deleteTransaction(String id) {
+    setState(() {
+      _usertrans.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -72,54 +84,71 @@ class _ExpensePageState extends State<ExpensePage> {
     final mediaConst = MediaQuery.of(context);
     final isLandScape = mediaConst.orientation == Orientation.landscape;
 
-    final appBar = AppBar(
-      title: Text("Expenses Tracker"),
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text("Expenses Tracker"),
+          )
+        : AppBar(
+            title: Text("Expenses Tracker"),
+          );
+
+    final txListWidget = Container(
+        height: mediaConst.size.height * 0.7 -
+            appBar.preferredSize.height -
+            mediaConst.padding.top,
+        child: TrasactionList(_usertrans, _deleteTransaction));
+
+    final _pageBody = SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          if (isLandScape)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Show Chart"),
+                Switch.adaptive(
+                  value: _showChart,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _showChart = value;
+                    });
+                  },
+                )
+              ],
+            ),
+          if (!isLandScape)
+            Container(
+                height: mediaConst.size.height * 0.3 -
+                    mediaConst.padding.top -
+                    appBar.preferredSize.height,
+                child: Chart(_recentTransactions)),
+          if (!isLandScape) txListWidget,
+          if (isLandScape)
+            _showChart
+                ? Container(
+                    height: mediaConst.size.height * 0.7 -
+                        mediaConst.padding.top -
+                        appBar.preferredSize.height,
+                    child: Chart(_recentTransactions))
+                : txListWidget,
+        ],
+      ),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            if (isLandScape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Show Chart"),
-                  Switch(
-                    value: _showChart,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _showChart = value;
-                      });
-                    },
-                  )
-                ],
-              ),
-            if (!isLandScape)
-              Container(
-                  height: mediaConst.size.height * 0.3 -
-                      mediaConst.padding.top -
-                      appBar.preferredSize.height,
-                  child: Chart(_recentTransactions)),
-            if (!isLandScape) TrasactionList(_usertrans),
-            if (isLandScape)
-              _showChart
-                  ? Container(
-                      height: mediaConst.size.height * 0.7 -
-                          mediaConst.padding.top -
-                          appBar.preferredSize.height,
-                      child: Chart(_recentTransactions))
-                  : TrasactionList(_usertrans),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showaddtransaction(context);
-        },
-        child: Icon(Icons.add),
-      ),
-    );
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: _pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: _pageBody,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                _showaddtransaction(context);
+              },
+              child: Icon(Icons.add),
+            ),
+          );
   }
 }

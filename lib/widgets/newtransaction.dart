@@ -44,59 +44,65 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              TextField(
-                decoration: InputDecoration(labelText: "Item Name"),
-                controller: itemnamecontroller,
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: "Item Price"),
-                controller: itempricecontroller,
-                keyboardType: TextInputType.number,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      _selecteddate == null
-                          ? "No date Choosen"
-                          : "Trans Date :${DateFormat.yMEd().format(_selecteddate)}",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Row(children: <Widget>[
-                    FlatButton(
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          child: Padding(
+            padding: EdgeInsets.only(
+                top: 10.0,
+                left: 10.0,
+                right: 10.0,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(labelText: "Item Name"),
+                  controller: itemnamecontroller,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: "Item Price"),
+                  controller: itempricecontroller,
+                  keyboardType: TextInputType.number,
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
                       child: Text(
-                        "Choose date",
+                        _selecteddate == null
+                            ? "No date Choosen"
+                            : "Trans Date :${DateFormat.yMEd().format(_selecteddate)}",
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onPressed: () {
-                        _pickdate();
-                      },
                     ),
-                    Icon(Icons.calendar_today),
-                  ]),
-                ],
-              ),
-              RaisedButton(
-                onPressed: submittrans,
-                color: Colors.blue,
-                child: Text("Add Transaction"),
-                textColor: Colors.white,
-              ),
-            ],
+                    Row(children: <Widget>[
+                      FlatButton(
+                        child: Text(
+                          "Choose date",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          _pickdate();
+                        },
+                      ),
+                      Icon(Icons.calendar_today),
+                    ]),
+                  ],
+                ),
+                RaisedButton(
+                  onPressed: submittrans,
+                  color: Colors.blue,
+                  child: Text("Add Transaction"),
+                  textColor: Colors.white,
+                ),
+              ],
+            ),
           ),
         ),
       ),
